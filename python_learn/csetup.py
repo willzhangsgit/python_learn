@@ -7,5 +7,5 @@ options = {
 setup(
 options = options,
 zipfile = None,
-console = ['will.py']
+console = ['meizei_gif1.py']
 )

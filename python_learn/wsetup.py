@@ -7,5 +7,5 @@ options = {
 setup(
 options = options,
 zipfile = None,
-windows = ['firstwindow.py']
+windows = ['meizei_pc2.py']
 )
