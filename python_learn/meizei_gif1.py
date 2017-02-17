@@ -14,7 +14,7 @@ def conn_try_again(function):
         try:  
             return function(*args, **kwargs)  
         except Exception as err:  
-            if count['num'] < 5:  
+            if count['num'] < 6:  
                 count['num'] += 1  
                 return wrapped(*args, **kwargs)                    
             else:
@@ -33,12 +33,13 @@ def getHtml(url):
     try:
         headers = {'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'}
         request = urllib.request.Request(url, data = None, headers = headers)
-        page = urllib.request.urlopen(request, timeout = 3)
+        page = urllib.request.urlopen(request, timeout = 10)
         html = page.read()
         html = html.decode('utf-8')
+        time.sleep(2)
         return html
     except Exception as e:
-        print('getHtml Eroor:' + e)
+        print('getHtml Eroor:' + str(e))
         raise e
 
 @conn_try_again 
@@ -55,11 +56,10 @@ def downloadImg(html, num, foldername):
             print('Downloading image to location: ' + target)
             if len(myItems) > 0:
                 urllib.request.urlretrieve(myItems[0], target, schedule)
-                time.sleep(1)
         else:
             print('jump next')
     except Exception as e:
-        print('DownLoad Error:' + e)
+        print('DownLoad Error:' + str(e))
         raise e
         
 def findFirstList(html):
@@ -74,13 +74,13 @@ def findList(html):
 def totalDownload(modelUrl, fnum):
     try:
         listHtml = getHtml(modelUrl)
-        listContent = findList(listHtml)
+        listContent = findList(listHtml)          
         for list in listContent:
             html = getHtml(modelUrl + "/" + str(list))
             #print(html)
             downloadImg(html, str(list), str(fnum))
     except Exception as e:
-        print('total Error:' + e)
+        print('total Error:' + str(e))
         raise e
     
 if __name__ == '__main__':
@@ -88,11 +88,17 @@ if __name__ == '__main__':
         listHtml = getHtml('http://55po.com/gifchuchu')
         #http://55po.com/dongtaitu
         firstlist = findFirstList(listHtml)
-        for list in firstlist:
-            modelUrl = 'http://55po.com/' + str(list)
-            totalDownload(modelUrl, str(list))
+        print(firstlist)
+        wonderList = input()
+        if wonderList != "":
+            modelUrl = 'http://55po.com/' + str(wonderList)
+            totalDownload(modelUrl, str(wonderList))
+        else:    
+            for list in firstlist:
+                modelUrl = 'http://55po.com/' + str(list)
+                totalDownload(modelUrl, str(list))
         print("Download has finished.")
         os.system("pause")
     except Exception as e:
-        print("Download Exception Catch:" + e)
+        print("Download Exception Catch:" + str(e))
         os.system("pause")        
